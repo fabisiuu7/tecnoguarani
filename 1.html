@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Juego Drag and Drop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        /* Efecto de partículas de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Navigation Bar - Estilo del área personal */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-logo-left img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 40px 0 20px;
+            font-size: 36px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #error-contador {
+            text-align: center;
+            font-size: 24px;
+            color: #ff6b6b;
+            margin-bottom: 30px;
+            font-weight: bold;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            padding: 10px 20px;
+            background: rgba(255, 107, 107, 0.2);
+            border-radius: 12px;
+            display: inline-block;
+            margin-left: 50%;
+            transform: translateX(-50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .container img {
+            max-width: 120px;
+            height: auto;
+            cursor: grab;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            background: white;
+            padding: 10px;
+            animation: bounceIn 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .container img:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .container img:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .container img:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-50px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .container img:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 12px 30px rgba(109, 212, 126, 0.4);
+        }
+
+        .container img:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+
+        .figura {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            animation: slideUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .figura:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .figura:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .figura:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .box {
+            width: 180px;
+            height: 140px;
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .box::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(109, 212, 126, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+        }
+
+        .box:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .box.drag-over {
+            border-color: #6DD47E;
+            background: rgba(109, 212, 126, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.5);
+        }
+
+        .box.correct {
+            animation: correctAnimation 0.6s ease;
+            border-color: #6DD47E;
+            border-style: solid;
+            background: rgba(109, 212, 126, 0.3);
+        }
+
+        @keyframes correctAnimation {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            75% {
+                transform: scale(1.1) rotate(-5deg);
+            }
+        }
+
+        .box.incorrect {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            animation: dropIn 0.5s ease;
+        }
+
+        @keyframes dropIn {
+            from {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .figura h2 {
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            background: rgba(41, 50, 80, 0.6);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        #mensaje {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(41, 50, 80, 0.98), rgba(60, 76, 128, 0.98));
+            color: white;
+            padding: 30px 50px;
+            border-radius: 20px;
+            z-index: 1000;
+            font-size: 28px;
+            font-weight: bold;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 2px solid #6DD47E;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        #mensaje.success {
+            background: linear-gradient(135deg, rgba(109, 212, 126, 0.98), rgba(76, 175, 80, 0.98));
+            animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55), celebrate 1s ease 0.4s;
+        }
+
+        @keyframes celebrate {
+            0%, 100% {
+                transform: translate(-50%, -50%) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(-50%, -50%) rotate(-5deg) scale(1.05);
+            }
+            75% {
+                transform: translate(-50%, -50%) rotate(5deg) scale(1.05);
+            }
+        }
+
+        #mensaje.error {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.98), rgba(239, 83, 80, 0.98));
+        }
+
+        /* Confetti effect */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #6DD47E;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+            z-index: 999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                right: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-menu li a {
+                justify-content: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 28px;
+                margin: 30px 20px 20px;
+            }
+
+            .container img {
+                max-width: 100px;
+            }
+
+            .box {
+                width: 140px;
+                height: 110px;
+            }
+
+            .figura h2 {
+                font-size: 20px;
+            }
+
+            #mensaje {
+                font-size: 22px;
+                padding: 25px 40px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .nav-logo-left img {
+                height: 45px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .container img {
+                max-width: 80px;
+            }
+
+            .box {
+                width: 120px;
+                height: 100px;
+            }
+
+            .figura h2 {
+                font-size: 18px;
+            }
+
+            #error-contador {
+                font-size: 20px;
+            }
+
+            #mensaje {
+                font-size: 20px;
+                padding: 20px 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="../img/tecnoguarani.jpg" alt="Logo Tecnoguaraní" onerror="this.style.display='none'">
+                <img src="../img/soria.jpg" alt="Logo Colegio" onerror="this.style.display='none'">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="../../juegos.html"><i class="fas fa-gamepad"></i> Juegos</a></li>
+                <li><a href="../../bienvenida.html"><i class="fas fa-star"></i> Página Principal</a></li>
+                <li><a href="../../area_per.html"><i class="fas fa-user"></i> Área personal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>🎯 Arrastra donde corresponde</h1>
+        <div id="error-contador">❌ Errores: 0</div>
+
+        <div class="container">
+            <img src="img/buenos dias.jpg" alt="Buenos Días" draggable="true" ondragstart="drag(event)" id="Puama" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EPuama%3C/text%3E%3C/svg%3E'">
+            <img src="img/buenas tardes.jpg" alt="Buenas Tardes" draggable="true" ondragstart="drag(event)" id="Kaaruma" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EKaaruma%3C/text%3E%3C/svg%3E'">
+            <img src="img/buenas noches.jpg" alt="Buenas Noches" draggable="true" ondragstart="drag(event)" id="Pituma" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EPituma%3C/text%3E%3C/svg%3E'">
+        </div>
+
+        <div class="container">
+            <div class="figura">
+                <div class="box" id="0" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
+                <h2>Puama</h2>
+            </div>
+            <div class="figura">
+                <div class="box" id="1" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
+                <h2>Kaaruma</h2>
+            </div>
+            <div class="figura">
+                <div class="box" id="2" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)"></div>
+                <h2>Pituma</h2>
+            </div>
+        </div>
+    </main>
+
+    <div id="mensaje"></div>
+
+    <script>
+        let intentosCorrectos = 0;
+        let errores = 0;
+        const maxErrores = 2;
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+            ev.target.classList.add('drag-over');
+        }
+
+        function dragLeave(ev) {
+            ev.target.classList.remove('drag-over');
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            ev.target.classList.remove('drag-over');
+            
+            var data = ev.dataTransfer.getData("text");
+            var targetId = ev.target.id;
+            var draggedElement = document.getElementById(data);
+
+            // Verificar si el box ya tiene una imagen
+            if (ev.target.children.length > 0) {
+                mostrarMensaje("❌ Esta casilla ya está ocupada", false, 'error');
+                return;
+            }
+
+            if ((data === "Puama" && targetId === "0") ||
+                (data === "Kaaruma" && targetId === "1") ||
+                (data === "Pituma" && targetId === "2")) {
+                
+                ev.target.appendChild(draggedElement);
+                ev.target.classList.add('correct');
+                intentosCorrectos++;
+                mostrarMensaje("✅ ¡Correcto!", false, 'success');
+
+                if (intentosCorrectos === 3) {
+                    setTimeout(() => {
+                        createConfetti();
+                        mostrarMensaje("🎉 ¡Felicidades, ganaste!", true, 'success');
+                    }, 500);
+                    
+                    setTimeout(() => {
+                        window.location.href = "../../juegos.php";
+                    }, 4000);
+                }
+            } else {
+                ev.target.classList.add('incorrect');
+                setTimeout(() => {
+                    ev.target.classList.remove('incorrect');
+                }, 500);
+                
+                errores++;
+                document.getElementById('error-contador').textContent = `❌ Errores: ${errores}`;
+                mostrarMensaje("❌ Intenta de nuevo", false, 'error');
+
+                if (errores > maxErrores) {
+                    mostrarMensaje("😢 Perdiste, reiniciando...", true, 'error');
+                }
+            }
+        }
+
+        function mostrarMensaje(texto, reiniciar = false, tipo = '') {
+            const mensaje = document.getElementById("mensaje");
+            mensaje.textContent = texto;
+            mensaje.className = tipo;
+            mensaje.style.display = "block";
+
+            setTimeout(() => {
+                mensaje.style.display = "none";
+                if (reiniciar) {
+                    location.reload();
+                }
+            }, 3000);
+        }
+
+        function createConfetti() {
+            const colors = ['#6DD47E', '#667eea', '#764ba2', '#ffd700', '#ff6b6b'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 30);
+            }
+        }
+
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Cerrar menú móvil al hacer clic en un enlace
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

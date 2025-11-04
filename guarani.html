@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un poco de Guaraní - Historia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                transform: translateX(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                transform: translateX(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left,
+        .nav-logo-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo-left img,
+        .nav-logo-right img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover,
+        .nav-logo-right img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: block;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 120px 20px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-section h1 {
+            font-size: 56px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .timeline-container {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .timeline-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
+            align-items: center;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            animation: fadeInLeft 0.8s ease-out both;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            animation: fadeInRight 0.8s ease-out both;
+            order: 2;
+        }
+
+        .timeline-item:nth-child(2) .timeline-content {
+            animation-delay: 0.2s;
+        }
+
+        .timeline-item:nth-child(3) .timeline-content {
+            animation-delay: 0.4s;
+        }
+
+        .timeline-item:nth-child(4) .timeline-content {
+            animation-delay: 0.6s;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .timeline-content h3 {
+            font-size: 28px;
+            color: #293250;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .timeline-content p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .timeline-image {
+            position: relative;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            height: 400px;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-image {
+            animation: fadeInRight 0.8s ease-out both;
+        }
+
+        .timeline-item:nth-child(even) .timeline-image {
+            animation: fadeInLeft 0.8s ease-out both;
+        }
+
+        .timeline-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .timeline-item:hover .timeline-image img {
+            transform: scale(1.1);
+        }
+
+        .timeline-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            z-index: 1;
+        }
+
+        /* Info Cards */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        .info-card {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(109, 212, 126, 0.4);
+        }
+
+        .info-card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(109, 212, 126, 0.4);
+        }
+
+        .info-card h4 {
+            font-size: 22px;
+            color: #293250;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .info-card p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            text-align: center;
+            color: #6DD47E;
+            font-size: 16px;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 80px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .timeline-item {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .timeline-item:nth-child(even) .timeline-content {
+                order: 1;
+            }
+
+            .timeline-image {
+                height: 350px;
+            }
+
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                right: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-logo-right {
+                display: none;
+            }
+
+            .hero-section h1 {
+                font-size: 36px;
+            }
+
+            .timeline-content {
+                padding: 30px 25px;
+            }
+
+            .timeline-content h3 {
+                font-size: 24px;
+            }
+
+            .timeline-image {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section h1 {
+                font-size: 28px;
+            }
+
+            .timeline-content {
+                padding: 25px 20px;
+            }
+
+            .timeline-content h3 {
+                font-size: 20px;
+            }
+
+            .timeline-image {
+                height: 250px;
+            }
+        }
+    </style>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="img/tecnoguarani.jpg" alt="Logo Tecnoguaraní">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="nosotros.html"><i class="fas fa-info-circle"></i> Nosotros</a></li>
+                <li><a href="guarani.html"><i class="fas fa-book"></i> Un poco de guaraní</a></li>
+            </ul>
+
+            <div class="nav-logo-right">
+                <img src="img/soria.jpg" alt="Logo Colegio">
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1>📖 Historia del Pueblo Guaraní</h1>
+            <p>Conoce la rica historia y cultura de los guaraníes</p>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="timeline-section">
+            <div class="timeline-container">
+                <!-- Timeline Item 1 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="timeline-badge"><i class="fas fa-route"></i> Orígenes</span>
+                        <h3>La Gran Migración</h3>
+                        <p>
+                            Los antiguos guaraníes iniciaron una gran migración desde Paraguay y el sureste de Brasil hacia el piedemonte andino. Durante este recorrido, establecieron su presencia y dominaron a los pueblos chané, imponiendo su lengua y cultura.
+                        </p>
+                    </div>
+                    <div class="timeline-image">
+                        <img src="img/guaranies.jpg" alt="Pueblo Guaraní">
+                    </div>
+                </div>
+
+                <!-- Timeline Item 2 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="timeline-badge"><i class="fas fa-shield-alt"></i> Resistencia</span>
+                        <h3>Época Colonial</h3>
+                        <p>
+                            Durante la colonización española, los guaraníes resistieron obstinadamente a los conquistadores. Mantuvieron su identidad cultural y participaron activamente en las luchas por la independencia, defendiendo su territorio y tradiciones.
+                        </p>
+                    </div>
+                    <div class="timeline-image">
+                        <img src="img/guaranies.jpg" alt="Resistencia Guaraní">
+                    </div>
+                </div>
+
+                <!-- Timeline Item 3 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="timeline-badge"><i class="fas fa-landmark"></i> Batalla Histórica</span>
+                        <h3>Kuruyuki - 1892</h3>
+                        <p>
+                            La batalla de Kuruyuki en 1892 marcó la última gran resistencia guaraní. Tras esta derrota, el pueblo guaraní perdió su territorio e independencia, siendo sometidos a servidumbre mientras sus tierras fueron tomadas por haciendas ganaderas.
+                        </p>
+                    </div>
+                    <div class="timeline-image">
+                        <img src="img/guaranies.jpg" alt="Batalla de Kuruyuki">
+                    </div>
+                </div>
+
+                <!-- Timeline Item 4 -->
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <span class="timeline-badge"><i class="fas fa-users"></i> Actualidad</span>
+                        <h3>Subgrupos en Santa Cruz</h3>
+                        <p>
+                            Hoy en día, en Santa Cruz existen dos subgrupos principales: los <strong>ava guaraní</strong> y los <strong>guaraní isoseño</strong>. Cada uno mantiene sus propias tradiciones y características culturales, preservando el legado de sus ancestros.
+                        </p>
+                    </div>
+                    <div class="timeline-image">
+                        <img src="img/guaranies.jpg" alt="Guaraníes Contemporáneos">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Info Cards -->
+        <section class="info-cards">
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <h4>Lengua Guaraní</h4>
+                <p>El idioma guaraní es parte fundamental de la identidad cultural, transmitido de generación en generación como herencia ancestral.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h4>Cultura Viva</h4>
+                <p>A pesar de los desafíos históricos, la cultura guaraní permanece viva a través de sus costumbres, música, artesanía y tradiciones.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Aprende Guaraní. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

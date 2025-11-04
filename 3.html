@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <title>Ordena las Letras - Guaraní</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efecto de fondo animado */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) translateY(-50px);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2) rotate(5deg); }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-logo-left img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        /* Sections */
+        section {
+            max-width: 1200px;
+            width: 100%;
+            padding: 50px 20px;
+            margin: auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* PANTALLA INICIO */
+        #pantalla-inicio {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        #pantalla-inicio h2 {
+            font-size: 72px;
+            font-weight: 800;
+            text-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            animation: scaleIn 0.8s ease-out;
+        }
+
+        #pantalla-inicio h2 span {
+            color: #6DD47E;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        #pantalla-inicio p {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        #pantalla-inicio button {
+            font-size: 32px;
+            font-weight: 700;
+            border: none;
+            padding: 20px 60px;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(109, 212, 126, 0.4);
+            transition: all 0.3s ease;
+            animation: bounceIn 1s ease-out 0.5s both;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #pantalla-inicio button:hover {
+            background: linear-gradient(135deg, #4CAF50 0%, #6DD47E 100%);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(109, 212, 126, 0.6);
+        }
+
+        #pantalla-inicio button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* PANTALLA JUEGO */
+        #pantalla-juego {
+            display: none;
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+
+        #pantalla-juego h2 {
+            font-size: 48px;
+            font-weight: 700;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+        }
+
+        #pantalla-juego h2 span {
+            color: #6DD47E;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            min-width: 150px;
+        }
+
+        .info-box i {
+            font-size: 24px;
+            margin-right: 10px;
+            color: #6DD47E;
+        }
+
+        .info-box span {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .contenedor-palabra {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 40px 0;
+            min-height: 100px;
+            align-items: center;
+        }
+
+        .letra {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            color: #293250;
+            font-size: 42px;
+            font-weight: 800;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 0.6s ease-out both;
+            transition: all 0.3s ease;
+        }
+
+        .letra:hover {
+            transform: translateY(-5px) rotate(5deg);
+            box-shadow: 0 12px 30px rgba(109, 212, 126, 0.4);
+        }
+
+        .letra:nth-child(1) { animation-delay: 0.05s; }
+        .letra:nth-child(2) { animation-delay: 0.1s; }
+        .letra:nth-child(3) { animation-delay: 0.15s; }
+        .letra:nth-child(4) { animation-delay: 0.2s; }
+        .letra:nth-child(5) { animation-delay: 0.25s; }
+        .letra:nth-child(6) { animation-delay: 0.3s; }
+        .letra:nth-child(7) { animation-delay: 0.35s; }
+        .letra:nth-child(8) { animation-delay: 0.4s; }
+        .letra:nth-child(9) { animation-delay: 0.45s; }
+        .letra:nth-child(10) { animation-delay: 0.5s; }
+        .letra:nth-child(11) { animation-delay: 0.55s; }
+        .letra:nth-child(12) { animation-delay: 0.6s; }
+
+        #pantalla-juego input {
+            display: block;
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto;
+            font-size: 38px;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            outline: none;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 15px 25px;
+            text-align: center;
+            color: #fff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        #pantalla-juego input:focus {
+            border-color: #6DD47E;
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        #pantalla-juego input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 400;
+        }
+
+        /* Progress Bar */
+        #myProgress {
+            width: 100%;
+            max-width: 600px;
+            margin: 30px auto;
+            background: rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            border-radius: 50px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #myBar {
+            width: 1%;
+            height: 40px;
+            background: linear-gradient(90deg, #6DD47E 0%, #4CAF50 100%);
+            transition: width 0.3s ease;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #myBar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .acertadas {
+            margin-top: 40px;
+            background: rgba(109, 212, 126, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 20px;
+            display: inline-block;
+            border: 3px solid #6DD47E;
+        }
+
+        .acertadas i {
+            color: #6DD47E;
+            font-size: 42px;
+            margin-right: 15px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .acertadas span {
+            font-size: 48px;
+            font-weight: 800;
+            color: #6DD47E;
+        }
+
+        /* PANTALLA FINAL */
+        #pantalla-final {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 100px;
+        }
+
+        #pantalla-final h2 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-decoration: underline;
+            text-decoration-color: #6DD47E;
+            text-underline-offset: 10px;
+            animation: scaleIn 0.8s ease-out;
+        }
+
+        #pantalla-final h3 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        #pantalla-final h3 span {
+            display: block;
+            font-size: 96px;
+            font-weight: 800;
+            color: #6DD47E;
+            margin: 20px 0;
+            text-shadow: 0 5px 30px rgba(109, 212, 126, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        #pantalla-final button {
+            font-size: 28px;
+            font-weight: 700;
+            border: none;
+            padding: 18px 50px;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            color: #fff;
+            box-shadow: 0 10px 30px rgba(109, 212, 126, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            animation: bounceIn 1s ease-out 0.5s both;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        #pantalla-final button:hover {
+            background: linear-gradient(135deg, #4CAF50 0%, #6DD47E 100%);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(109, 212, 126, 0.6);
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #6DD47E;
+            animation: confetti-fall 3s linear;
+            z-index: 999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Correct/Incorrect animations */
+        .palabra-correcta {
+            animation: correctPulse 0.6s ease;
+        }
+
+        .palabra-incorrecta {
+            animation: shake 0.5s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.show {
+                display: flex;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-menu li a {
+                justify-content: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            #pantalla-inicio h2 {
+                font-size: 48px;
+            }
+
+            #pantalla-inicio button {
+                font-size: 24px;
+                padding: 15px 40px;
+            }
+
+            #pantalla-juego h2 {
+                font-size: 32px;
+            }
+
+            .letra {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+
+            #pantalla-juego input {
+                font-size: 24px;
+                width: 95%;
+            }
+
+            .acertadas i {
+                font-size: 32px;
+            }
+
+            .acertadas span {
+                font-size: 36px;
+            }
+
+            #pantalla-final h2 {
+                font-size: 36px;
+            }
+
+            #pantalla-final h3 {
+                font-size: 24px;
+            }
+
+            #pantalla-final h3 span {
+                font-size: 64px;
+            }
+
+            .game-info {
+                gap: 20px;
+            }
+
+            .info-box {
+                min-width: 120px;
+                padding: 10px 20px;
+            }
+
+            .info-box i {
+                font-size: 20px;
+            }
+
+            .info-box span {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .nav-logo-left img {
+                height: 45px;
+            }
+
+            #pantalla-inicio h2 {
+                font-size: 36px;
+            }
+
+            #pantalla-inicio p {
+                font-size: 18px;
+            }
+
+            .letra {
+                width: 40px;
+                height: 40px;
+                font-size: 22px;
+                gap: 5px;
+            }
+
+            #pantalla-juego input {
+                font-size: 20px;
+            }
+
+            #pantalla-final button {
+                font-size: 20px;
+                padding: 14px 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="../img/tecnoguarani.jpg" alt="Logo Tecnoguaraní" onerror="this.style.display='none'">
+                <img src="../img/soria.jpg" alt="Logo Colegio" onerror="this.style.display='none'">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="../../juegos.html"><i class="fas fa-gamepad"></i> Juegos</a></li>
+                <li><a href="../../bienvenida.html"><i class="fas fa-star"></i> Página Principal</a></li>
+                <li><a href="../../area_per.html"><i class="fas fa-user"></i> Área personal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="pantalla-inicio">
+        <h2>🎯 Ordena las <span>Letras</span></h2>
+        <p>Descubre palabras en Guaraní ordenando las letras</p>
+        <button onclick="comenzarJuego()">
+            <i class="fas fa-play"></i> ¡JUGAR AHORA!
+        </button>
+    </section>
+
+    <section id="pantalla-juego">
+        <h2>Ordena las <span>Letras</span></h2>
+        
+        <div class="game-info">
+            <div class="info-box">
+                <i class="fas fa-clock"></i>
+                <span id="tiempo-restante">30</span>s
+            </div>
+            <div class="info-box acertadas">
+                <i class="fas fa-trophy"></i>
+                <span id="contador">0</span>
+            </div>
+        </div>
+
+        <div class="contenedor-palabra" id="palabra"></div>
+
+        <input type="text" id="palabraIngresada" onkeyup="comparar()" placeholder="Escribe aquí...">
+
+        <div id="myProgress">
+            <div id="myBar"></div>
+        </div>
+    </section>
+
+    <section id="pantalla-final">
+        <h2>🎊 RESULTADO FINAL</h2>
+        <h3>¡LOGRASTE DESCUBRIR <span id="acertadas">0</span> PALABRAS!</h3>
+        <button onclick="comenzarJuego()">
+            <i class="fas fa-redo"></i> JUGAR OTRA VEZ
+        </button>
+    </section>
+
+    <script>
+        let palabras = [];
+        // Más palabras en Guaraní
+        palabras = [
+            "AGUARAYAIMBA", "AGUARA", "ANDIRA", "YAIMBA", "MITA", "GUAA", 
+            "GUAKA", "KAPURA", "IVIYA", "KAVAYU", "MACHI", "PUAMA", "KAARUMA",
+            "PITUMA", "YASOROPAI", "TUPA", "ARASA", "MIMBI", "PIRE", "KARAI"
+        ];
+        
+        let palabrasDesordenadas = [];
+        let posJuegoActual = 0;
+        let cantidadAcertados = 0;
+        let tiempoLimite = 20; // 20 segundos por palabra
+        let tiempoRestante = tiempoLimite;
+        let intervaloTiempo;
+        let idInterval;
+        let x = 0;
+
+        // Función para desordenar las palabras de manera más efectiva
+        function desordenarPalabras() {
+            palabrasDesordenadas = [];
+            for (var i = 0; i < palabras.length; i++) {
+                let palabra = palabras[i];
+                let palabraArray = palabra.split('');
+                
+                // Desordenamos varias veces para asegurar mejor desorden
+                for (let j = 0; j < 3; j++) {
+                    palabraArray = palabraArray.sort(() => Math.random() - 0.5);
+                }
+                
+                // Convertimos el arreglo a string
+                let palabraDesordenada = palabraArray.join('');
+                
+                // Verificamos que no sea igual a la original
+                if (palabraDesordenada === palabra && palabra.length > 1) {
+                    // Si es igual, intercambiamos dos letras
+                    let temp = palabraArray[0];
+                    palabraArray[0] = palabraArray[1];
+                    palabraArray[1] = temp;
+                    palabraDesordenada = palabraArray.join('');
+                }
+                
+                palabrasDesordenadas.push(palabraDesordenada);
+            }
+        }
+
+        function mostrarNuevaPalabra() {
+            if (posJuegoActual >= palabras.length) {
+                mostrarPantallaFinal();
+                return;
+            }
+
+            let contenedorPalabra = document.getElementById("palabra");
+            contenedorPalabra.innerHTML = "";
+
+            let palabra = palabrasDesordenadas[posJuegoActual];
+            let palabraArray = palabra.split('');
+
+            for (let i = 0; i < palabraArray.length; i++) {
+                var div = document.createElement("div");
+                div.className = "letra";
+                div.innerHTML = palabraArray[i];
+                contenedorPalabra.appendChild(div);
+            }
+
+            // Reiniciar el temporizador y la barra de progreso
+            tiempoRestante = tiempoLimite;
+            document.getElementById("tiempo-restante").innerHTML = tiempoRestante;
+            clearInterval(intervaloTiempo);
+            clearInterval(idInterval);
+            x = 0;
+            iniciarTemporizador();
+            move();
+        }
+
+        function iniciarTemporizador() {
+            intervaloTiempo = setInterval(() => {
+                tiempoRestante--;
+                document.getElementById("tiempo-restante").innerHTML = tiempoRestante;
+                
+                if (tiempoRestante <= 0) {
+                    clearInterval(intervaloTiempo);
+                    // Si se acaba el tiempo, pasar a la siguiente palabra
+                    document.getElementById("palabraIngresada").classList.add("palabra-incorrecta");
+                    setTimeout(() => {
+                        document.getElementById("palabraIngresada").classList.remove("palabra-incorrecta");
+                        posJuegoActual++;
+                        document.getElementById("palabraIngresada").value = "";
+                        mostrarNuevaPalabra();
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+        function mostrarPantallaFinal() {
+            clearInterval(idInterval);
+            clearInterval(intervaloTiempo);
+            document.getElementById("pantalla-juego").style.display = "none";
+            document.getElementById("pantalla-final").style.display = "flex";
+            document.getElementById("acertadas").innerHTML = cantidadAcertados;
+            
+            if (cantidadAcertados >= palabras.length * 0.7) {
+                createConfetti();
+            }
+        }
+
+        function comparar() {
+            var palabraOrdenada = palabras[posJuegoActual];
+            var palabraIngresada = document.getElementById("palabraIngresada").value;
+            palabraIngresada = palabraIngresada.toUpperCase().trim();
+            palabraOrdenada = palabraOrdenada.toUpperCase().trim();
+
+            if (palabraOrdenada === palabraIngresada) {
+                clearInterval(intervaloTiempo);
+                document.getElementById("palabraIngresada").classList.add("palabra-correcta");
+                
+                posJuegoActual++;
+                cantidadAcertados++;
+                document.getElementById("contador").innerHTML = cantidadAcertados;
+                
+                setTimeout(() => {
+                    document.getElementById("palabraIngresada").classList.remove("palabra-correcta");
+                    document.getElementById("palabraIngresada").value = "";
+                    mostrarNuevaPalabra();
+                }, 800);
+            }
+        }
+
+        function move() {
+            if (x == 0) {
+                x = 1;
+                let elem = document.getElementById("myBar");
+                let width = 1;
+                let duracion = tiempoLimite * 1000; // 30 segundos en milisegundos
+                let incremento = 100 / (duracion / 50); // Cuánto aumentar cada 50ms
+                
+                idInterval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(idInterval);
+                        x = 0;
+                    } else {
+                        width += incremento;
+                        elem.style.width = width + "%";
+                    }
+                }, 50);
+            }
+        }
+
+        function comenzarJuego() {
+            palabrasDesordenadas = [];
+            posJuegoActual = 0;
+            cantidadAcertados = 0;
+            tiempoRestante = tiempoLimite;
+            
+            desordenarPalabras();
+            
+            document.getElementById("pantalla-inicio").style.display = "none";
+            document.getElementById("pantalla-juego").style.display = "block";
+            document.getElementById("pantalla-final").style.display = "none";
+            document.getElementById("contador").innerHTML = 0;
+            document.getElementById("palabraIngresada").value = "";
+            
+            mostrarNuevaPalabra();
+            document.getElementById("palabraIngresada").focus();
+        }
+
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('show');
+        }
+
+        function createConfetti() {
+            const colors = ['#6DD47E', '#667eea', '#764ba2', '#ffd700', '#ff6b6b'];
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 30);
+            }
+        }
+
+        // Cerrar menú móvil al hacer clic en un enlace
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('show');
+            });
+        });
+
+        // Prevenir envío de formulario al presionar Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('palabraIngresada');
+            if (input) {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Completa el Texto - Guaraní</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding-top: 90px;
+            position: relative;
+        }
+
+        /* Efecto de fondo animado */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-logo-left img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Hints Section */
+        .hints-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hints-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            color: #293250;
+            margin-bottom: 15px;
+        }
+
+        .hints-header h3 {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #667eea;
+        }
+
+        .hints-toggle {
+            font-size: 24px;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .hints-toggle.active {
+            transform: rotate(180deg);
+        }
+
+        .hints-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .hints-content.show {
+            max-height: 500px;
+        }
+
+        .hint-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 12px 18px;
+            margin: 10px 0;
+            border-radius: 12px;
+            border-left: 4px solid #6DD47E;
+            color: #293250;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .hint-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(109, 212, 126, 0.3);
+        }
+
+        .hint-item i {
+            color: #6DD47E;
+            font-size: 18px;
+        }
+
+        /* Text Section */
+        .texto {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .texto p {
+            line-height: 2;
+            font-size: 18px;
+            color: #293250;
+            font-weight: 500;
+        }
+
+        span {
+            display: inline-block;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            min-width: 120px;
+            height: 32px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            line-height: 32px;
+            border: 2px dashed #667eea;
+            color: #293250;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 4px;
+        }
+
+        span:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-style: solid;
+            transform: scale(1.05);
+        }
+
+        span:empty {
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+        }
+
+        /* Options Section */
+        .opciones {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+            min-height: 100px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .opciones .palabra {
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(109, 212, 126, 0.3);
+            animation: bounceIn 0.6s ease-out both;
+        }
+
+        .opciones .palabra:nth-child(1) { animation-delay: 0.1s; }
+        .opciones .palabra:nth-child(2) { animation-delay: 0.2s; }
+        .opciones .palabra:nth-child(3) { animation-delay: 0.3s; }
+        .opciones .palabra:nth-child(4) { animation-delay: 0.4s; }
+        .opciones .palabra:nth-child(5) { animation-delay: 0.5s; }
+        .opciones .palabra:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .opciones .palabra:hover {
+            background: linear-gradient(135deg, #4CAF50 0%, #6DD47E 100%);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(109, 212, 126, 0.5);
+        }
+
+        .opciones .palabra:active {
+            transform: scale(0.95);
+        }
+
+        /* Result */
+        #resultado {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 20px 0;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        /* Button */
+        button {
+            display: block;
+            margin: 30px auto;
+            padding: 16px 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Success/Error animations */
+        .correct {
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%) !important;
+            animation: correctPulse 0.6s ease;
+            border-color: #4CAF50 !important;
+        }
+
+        @keyframes correctPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .incorrect {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%) !important;
+            animation: shake 0.5s ease;
+            border-color: #ee5a6f !important;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #6DD47E;
+            animation: confetti-fall 3s linear;
+            z-index: 999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.show {
+                display: flex;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-menu li a {
+                justify-content: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .texto {
+                padding: 20px;
+            }
+
+            .texto p {
+                font-size: 16px;
+                line-height: 1.8;
+            }
+
+            span {
+                min-width: 100px;
+                height: 28px;
+                line-height: 28px;
+                font-size: 14px;
+            }
+
+            .opciones .palabra {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+
+            button {
+                width: 90%;
+                font-size: 18px;
+            }
+
+            .hints-container {
+                padding: 20px;
+            }
+
+            .hint-item {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .nav-logo-left img {
+                height: 45px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .texto p {
+                font-size: 15px;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 14px 36px;
+            }
+
+            #resultado {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="../img/tecnoguarani.jpg" alt="Logo Tecnoguaraní" onerror="this.style.display='none'">
+                <img src="../img/soria.jpg" alt="Logo Colegio" onerror="this.style.display='none'">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="../../juegos.html"><i class="fas fa-gamepad"></i> Juegos</a></li>
+                <li><a href="../../bienvenida.html"><i class="fas fa-star"></i> Página Principal</a></li>
+                <li><a href="../../area_per.html"><i class="fas fa-user"></i> Área personal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>📝 Completa el Texto en Guaraní</h1>
+
+        <!-- Hints Section -->
+        <div class="hints-container">
+            <div class="hints-header" onclick="toggleHints()">
+                <h3><i class="fas fa-lightbulb"></i> Pistas para ayudarte</h3>
+                <i class="fas fa-chevron-down hints-toggle" id="hintsToggle"></i>
+            </div>
+            <div class="hints-content" id="hintsContent">
+                <div class="hint-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>ikaviyae:</strong> "¿Cómo estás?" - Saludo común en Guaraní</span>
+                </div>
+                <div class="hint-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>Rosa:</strong> Es un nombre propio de persona</span>
+                </div>
+                <div class="hint-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>Che:</strong> Significa "Yo" en primera persona</span>
+                </div>
+                <div class="hint-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>anoi:</strong> Significa "tengo" o "yo tengo"</span>
+                </div>
+                <div class="hint-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>Jaema aja:</strong> Frase de despedida "Hasta luego entonces"</span>
+                </div>
+                <div class="hint-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong>Aja yema:</strong> Otra forma de despedida "Adiós"</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Section -->
+        <section class="texto">
+            <p>Puama. ¿Kereipa rei? Puama <span id="0"></span> ¿Mbaepa ndere? Chere <span id="1"></span> ¿Nde no?. Chere Jose ¿Mbovi arasapa renoi? <span id="2"></span> anoi pañandepo pandepo arasa. ¿Nde no? Che <span id="3"></span> pañandepo pandepo arasavi. <span id="4"></span> Jaekavi <span id="5"></span></p>
+        </section>
+
+        <!-- Options Section -->
+        <section class="opciones" id="opciones"></section>
+
+        <h2 id="resultado"></h2>
+
+        <button id="comprobar">
+            <i class="fas fa-check-circle"></i> Comprobar Respuestas
+        </button>
+    </main>
+
+    <script>
+        // Arreglo que contiene el orden correcto de las palabras
+        let orden_correcto = ['ikaviyae', 'Rosa', 'Che', 'anoi', 'Jaema aja,', 'Aja yema'];
+
+        // Palabras desordenadas para mostrar en opciones
+        let palabras_juego = ['Jaema aja,', 'ikaviyae', 'Rosa', 'Che', 'anoi', 'Aja yema'];
+
+        // Contenedor de las opciones
+        let contenedorOpciones = document.getElementById("opciones");
+        // Botón comprobar
+        let comprobar = document.getElementById("comprobar");
+        // Texto donde se muestra el resultado
+        let txtResultado = document.getElementById("resultado");
+
+        // Arreglo que contiene el orden de las palabras que el usuario va eligiendo
+        let posDisponible = ["", "", "", "", "", ""];
+
+        // Función que agrega las opciones
+        function agregarOpciones() {
+            palabras_juego.forEach(element => {
+                let div = document.createElement("div");
+                div.className = "palabra";
+                div.innerHTML = element;
+                div.setAttribute("onclick", "completar(this)");
+                contenedorOpciones.appendChild(div);
+            });
+        }
+        agregarOpciones();
+
+        // Agrego el método onclick a cada elemento span del texto
+        function agregarEliminarAspan() {
+            var spans = document.getElementsByTagName("span");
+            for (let i = 0; i < spans.length; i++) {
+                spans[i].setAttribute("onclick", "remove(this)");
+            }
+        }
+        agregarEliminarAspan();
+
+        // Función que coloca el texto de la opción elegida en el span correspondiente
+        function completar(palabra) {
+            let posLibre = posDisponible.indexOf("");
+            if (posLibre !== -1) {
+                document.getElementById(posLibre).innerHTML = palabra.innerHTML;
+                posDisponible[posLibre] = palabra.innerHTML;
+                contenedorOpciones.removeChild(palabra);
+            }
+        }
+
+        // Función que elimina una palabra del texto y la pone de nuevo en opciones
+        function remove(palabra) {
+            if (palabra.innerHTML != "") {
+                let div = document.createElement("div");
+                div.className = "palabra";
+                div.innerHTML = palabra.innerHTML;
+                div.setAttribute("onclick", "completar(this)");
+                contenedorOpciones.appendChild(div);
+
+                palabra.innerHTML = "";
+                posDisponible[palabra.id] = "";
+
+                document.getElementById(palabra.id).className = "";
+                txtResultado.innerHTML = "";
+            }
+        }
+
+        // Función que comprueba si está correcto
+        comprobar.onclick = function() {
+            let posLibre = posDisponible.indexOf("");
+            let totalAciertos = 0;
+
+            if (posLibre == -1) {
+                for (let i = 0; i < orden_correcto.length; i++) {
+                    if (orden_correcto[i] == posDisponible[i]) {
+                        document.getElementById(i).className = "correct";
+                        totalAciertos++;
+                    } else {
+                        document.getElementById(i).className = "incorrect";
+                    }
+                }
+
+                if (totalAciertos === orden_correcto.length) {
+                    txtResultado.innerHTML = "🎉 ¡Ganaste!";
+                    txtResultado.style.color = "#6DD47E";
+                    createConfetti();
+                    setTimeout(() => {
+                        window.location.href = "../../juegos.php";
+                    }, 3000);
+                } else {
+                    txtResultado.innerHTML = "😢 Intenta de nuevo";
+                    txtResultado.style.color = "#ff6b6b";
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+            } else {
+                alert("⚠️ Por favor completa todas las palabras");
+            }
+        }
+
+        // Toggle menu móvil
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('show');
+        }
+
+        // Toggle hints
+        function toggleHints() {
+            const hintsContent = document.getElementById('hintsContent');
+            const hintsToggle = document.getElementById('hintsToggle');
+            hintsContent.classList.toggle('show');
+            hintsToggle.classList.toggle('active');
+        }
+
+        // Crear confetti
+        function createConfetti() {
+            const colors = ['#6DD47E', '#667eea', '#764ba2', '#ffd700', '#ff6b6b'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 3000);
+                }, i * 30);
+            }
+        }
+
+        // Cerrar menú móvil al hacer clic en un enlace
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('show');
+            });
+        });
+    </script>
+</body>
+</html>

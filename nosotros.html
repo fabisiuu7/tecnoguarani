@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros - Aprende Guaraní</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left,
+        .nav-logo-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo-left img,
+        .nav-logo-right img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover,
+        .nav-logo-right img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: block;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 120px 20px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-section h1 {
+            font-size: 56px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        /* Content Section */
+        .content-section {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            align-items: center;
+        }
+
+        .text-content {
+            padding: 60px;
+        }
+
+        .text-content h2 {
+            font-size: 36px;
+            color: #293250;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .text-content p {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .highlight-box p {
+            color: white;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .image-content {
+            position: relative;
+            height: 100%;
+            min-height: 600px;
+        }
+
+        .image-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .content-section:hover .image-content img {
+            transform: scale(1.05);
+        }
+
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            pointer-events: none;
+        }
+
+        /* Features Section */
+        .features-section {
+            margin-top: 60px;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(109, 212, 126, 0.4);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 35px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(109, 212, 126, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            animation-delay: 0.5s;
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            animation-delay: 1s;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            color: #293250;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            text-align: center;
+            color: #6DD47E;
+            font-size: 16px;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 80px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .image-content {
+                min-height: 400px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                right: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-logo-right {
+                display: none;
+            }
+
+            .hero-section h1 {
+                font-size: 36px;
+            }
+
+            .text-content {
+                padding: 40px 30px;
+            }
+
+            .text-content h2 {
+                font-size: 28px;
+            }
+
+            .text-content p {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section h1 {
+                font-size: 28px;
+            }
+
+            .text-content {
+                padding: 30px 20px;
+            }
+
+            .text-content h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="img/tecnoguarani.jpg" alt="Logo Tecnoguaraní">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="nosotros.html"><i class="fas fa-info-circle"></i> Nosotros</a></li>
+                <li><a href="guarani.html"><i class="fas fa-book"></i> Un poco de guaraní</a></li>
+            </ul>
+
+            <div class="nav-logo-right">
+                <img src="img/soria.jpg" alt="Logo Colegio">
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1>🌟 Sobre Nosotros</h1>
+            <p>Descubre nuestra plataforma educativa innovadora</p>
+        </section>
+
+        <!-- Main Content Section -->
+        <section class="content-section">
+            <div class="content-grid">
+                <div class="text-content">
+                    <h2>Nuestra Misión</h2>
+                    <p>
+                        <strong>Aprende Guaraní</strong> es una plataforma interactiva diseñada para acercar el idioma y la cultura guaraní a estudiantes de todas las edades.
+                    </p>
+                    <p>
+                        A través de <strong>juegos didácticos e interactivos</strong>, los usuarios pueden practicar vocabulario, gramática y frases en guaraní de manera divertida y efectiva.
+                    </p>
+                    <div class="highlight-box">
+                        <p>
+                            <i class="fas fa-star"></i> Además de los juegos, ofrecemos recursos educativos como artículos, videos y materiales multimedia sobre la historia, mitos, costumbres y eventos importantes de la cultura guaraní.
+                        </p>
+                    </div>
+                </div>
+                <div class="image-content">
+                    <img src="img/imagen.nosotros.png" alt="Plataforma Aprende Guaraní">
+                    <div class="image-overlay"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <h3>Juegos Interactivos</h3>
+                    <p>Aprende mientras te diviertes con nuestros juegos educativos diseñados específicamente para el aprendizaje del guaraní</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Recursos Culturales</h3>
+                    <p>Explora la rica historia y tradiciones del pueblo guaraní a través de artículos y contenido multimedia</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Para Todos</h3>
+                    <p>Contenido adaptado para estudiantes de todos los niveles, desde principiantes hasta avanzados</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 Aprende Guaraní. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

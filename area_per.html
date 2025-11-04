@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área Personal - Aprende Guaraní</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-logo-left img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: block;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 120px 20px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-section h1 {
+            font-size: 56px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        /* Level Container */
+        .level-container {
+            background: white;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .level-container:nth-child(1) { animation-delay: 0.1s; }
+        .level-container:nth-child(2) { animation-delay: 0.2s; }
+        .level-container:nth-child(3) { animation-delay: 0.3s; }
+
+        .level-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(109, 212, 126, 0.3);
+        }
+
+        /* Level Header */
+        .level-header {
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            padding: 30px 40px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .level-header:hover::before {
+            left: 100%;
+        }
+
+        .level-header:hover {
+            background: linear-gradient(135deg, #4CAF50 0%, #6DD47E 100%);
+        }
+
+        .level-title-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .level-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #4CAF50;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .level-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .expand-icon {
+            font-size: 24px;
+            color: white;
+            transition: transform 0.4s ease;
+        }
+
+        .level-container.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Level Content */
+        .level-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .level-container.expanded .level-content {
+            max-height: 5000px;
+        }
+
+        .level-inner {
+            padding: 40px;
+        }
+
+        /* Game Section */
+        .game-section {
+            margin-bottom: 40px;
+        }
+
+        .game-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .game-header {
+            background: linear-gradient(to right, #6DD47E, transparent);
+            padding: 3px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .game-header-inner {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 13px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .game-number {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .game-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #293250;
+            margin: 0;
+        }
+
+        /* Vocabulary Grid */
+        .vocabulary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .vocab-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #6DD47E;
+            transition: all 0.3s ease;
+        }
+
+        .vocab-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 20px rgba(109, 212, 126, 0.3);
+            border-left-width: 8px;
+        }
+
+        .vocab-word {
+            font-size: 20px;
+            font-weight: 600;
+            color: #293250;
+            margin-bottom: 8px;
+        }
+
+        .vocab-translation {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Text Content */
+        .text-content {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #6DD47E;
+        }
+
+        .text-content p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .text-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .text-content strong {
+            color: #293250;
+            font-weight: 600;
+        }
+
+        /* Category Section */
+        .category-section {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #293250;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-title i {
+            color: #6DD47E;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            text-align: center;
+            color: #6DD47E;
+            font-size: 16px;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
+            margin-top: 80px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                right: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero-section h1 {
+                font-size: 36px;
+            }
+
+            .level-header {
+                padding: 20px 25px;
+            }
+
+            .level-title {
+                font-size: 24px;
+            }
+
+            .level-inner {
+                padding: 25px 20px;
+            }
+
+            .vocabulary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="codigo/img/tecnoguarani.jpg" alt="Logo Tecnoguaraní">
+                <img src="codigo/img/soria.jpg" alt="Logo Colegio">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="codigo/inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="bienvenida.html"><i class="fas fa-star"></i> Página Principal</a></li>
+                <li><a href="juegos.html"><i class="fas fa-gamepad"></i> Juegos</a></li>
+                <li><a href="area_per.html"><i class="fas fa-user"></i> Área Personal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="main-container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1>📚 Área Personal</h1>
+            <p>Material de estudio organizado por niveles</p>
+        </div>
+
+        <!-- Nivel 1 -->
+        <div class="level-container" id="level1">
+            <div class="level-header" onclick="toggleLevel('level1')">
+                <div class="level-title-group">
+                    <div class="level-icon">⭐</div>
+                    <h2 class="level-title">Nivel 1 - Principiante</h2>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="level-content">
+                <div class="level-inner">
+                    <!-- Juego 1: Saludos -->
+                    <div class="game-section">
+                        <div class="game-header">
+                            <div class="game-header-inner">
+                                <div class="game-number">1</div>
+                                <h3 class="game-title">Saludos (Moñemongeta)</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-sun"></i> Saludos Básicos
+                            </div>
+                            <div class="vocabulary-grid">
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Puama</div>
+                                    <div class="vocab-translation">Buen día</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Kaaruma</div>
+                                    <div class="vocab-translation">Buenas tardes</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Pituma</div>
+                                    <div class="vocab-translation">Buenas noches</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-users"></i> Saludos Plurales
+                            </div>
+                            <div class="vocabulary-grid">
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Pepuama</div>
+                                    <div class="vocab-translation">Buenos días</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Pekaaruma</div>
+                                    <div class="vocab-translation">Buenas tardes</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Pepïtuma</div>
+                                    <div class="vocab-translation">Buenas noches</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-comments"></i> Pregunta
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Kerai pa rei?</div>
+                                <div class="vocab-translation">¿Cómo estás?</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Juego 2: Despedidas -->
+                    <div class="game-section">
+                        <div class="game-header">
+                            <div class="game-header-inner">
+                                <div class="game-number">2</div>
+                                <h3 class="game-title">Despedidas (Ñesëa)</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card">
+                                <div class="vocab-word">Tumpa Ndiveño ekua</div>
+                                <div class="vocab-translation">Vaya con Dios</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Ajayema / Ayema</div>
+                                <div class="vocab-translation">Hasta luego / Adiós</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Yayoecha Kuri</div>
+                                <div class="vocab-translation">Nos vemos luego</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Yayoecha pïareve</div>
+                                <div class="vocab-translation">Nos vemos mañana</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Yayoecha</div>
+                                <div class="vocab-translation">Nos vemos</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Yasoropai</div>
+                                <div class="vocab-translation">Gracias</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nivel 2 -->
+        <div class="level-container" id="level2">
+            <div class="level-header" onclick="toggleLevel('level2')">
+                <div class="level-title-group">
+                    <div class="level-icon">🌟</div>
+                    <h2 class="level-title">Nivel 2 - Intermedio</h2>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="level-content">
+                <div class="level-inner">
+                    <!-- Juego 1: Familia -->
+                    <div class="game-section">
+                        <div class="game-header">
+                            <div class="game-header-inner">
+                                <div class="game-number">1</div>
+                                <h3 class="game-title">Nuestra Familia (Ñanerëtara reta)</h3>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-male"></i> Lo que dicen los Hombres
+                            </div>
+                            <div class="vocabulary-grid">
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cherai</div>
+                                    <div class="vocab-translation">Mi hijo</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chareyi</div>
+                                    <div class="vocab-translation">Mi hija</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cherimino</div>
+                                    <div class="vocab-translation">Mi nieto/a</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cheri+</div>
+                                    <div class="vocab-translation">Mi sobrino</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cheyetipe</div>
+                                    <div class="vocab-translation">Mi sobrina</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-users"></i> Términos Comunes (Ambos)
+                            </div>
+                            <div class="vocabulary-grid">
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cheru</div>
+                                    <div class="vocab-translation">Mi papá</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chesi</div>
+                                    <div class="vocab-translation">Mi mamá</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cheram+i</div>
+                                    <div class="vocab-translation">Mi abuelo</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cheyasi</div>
+                                    <div class="vocab-translation">Mi abuela</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-female"></i> Lo que dicen las Mujeres
+                            </div>
+                            <div class="vocabulary-grid">
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chememb+</div>
+                                    <div class="vocab-translation">Mi hijo/a</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cheramarïro</div>
+                                    <div class="vocab-translation">Mi nieto</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chepë</div>
+                                    <div class="vocab-translation">Mi sobrino</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cheme</div>
+                                    <div class="vocab-translation">Mi esposo</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chek+v+</div>
+                                    <div class="vocab-translation">Mi hermano</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chep+k++</div>
+                                    <div class="vocab-translation">Mi hermano menor</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Cherike</div>
+                                    <div class="vocab-translation">Mi hermano mayor</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chemendu</div>
+                                    <div class="vocab-translation">Mi suegro</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chemes+</div>
+                                    <div class="vocab-translation">Mi suegra</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chepëu</div>
+                                    <div class="vocab-translation">Mi yerno / Mi cuñado</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Juego 2: Animales -->
+                    <div class="game-section">
+                        <div class="game-header">
+                            <div class="game-header-inner">
+                                <div class="game-number">2</div>
+                                <h3 class="game-title">Animales (Mymba reta)</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card">
+                                <div class="vocab-word">Mita</div>
+                                <div class="vocab-translation">🐱 Gato</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Aguaranyaimba</div>
+                                <div class="vocab-translation">🐺 Lobo</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Aguara</div>
+                                <div class="vocab-translation">🦊 Zorro</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Andira</div>
+                                <div class="vocab-translation">🦇 Murciélago</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Yaimba</div>
+                                <div class="vocab-translation">🐕 Perro</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Guaa</div>
+                                <div class="vocab-translation">🦜 Paraba</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Guaka</div>
+                                <div class="vocab-translation">🐄 Vaca</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Kapura</div>
+                                <div class="vocab-translation">🐐 Cabra</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nivel 3 -->
+        <div class="level-container" id="level3">
+            <div class="level-header" onclick="toggleLevel('level3')">
+                <div class="level-title-group">
+                    <div class="level-icon">🔥</div>
+                    <h2 class="level-title">Nivel 3 - Avanzado</h2>
+                </div>
+                <i class="fas fa-chevron-down expand-icon"></i>
+            </div>
+            <div class="level-content">
+                <div class="level-inner">
+                    <!-- Juego 1: Cuerpo Humano -->
+                    <div class="game-section">
+                        <div class="game-header">
+                            <div class="game-header-inner">
+                                <div class="game-number">1</div>
+                                <h3 class="game-title">Oraciones del Cuerpo Humano</h3>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-book-open"></i> Oraciones de Ejemplo
+                            </div>
+                            <div class="text-content">
+                                <p><strong>Che anoi a jü</strong> - Yo tengo cabello negro</p>
+                                <p><strong>Jae guinoi tesa reta joviaü</strong> - Ella tiene ojos azules</p>
+                                <p><strong>Jae guinoi po reta</strong> - Él tiene manos</p>
+                                <p><strong>Ches+ guinoi topea reta puku</strong> - Mi mamá tiene pestañas largas</p>
+                                <p><strong>Nde ko a pitumimbi</strong> - Tú tienes cabello oscuro</p>
+                            </div>
+                        </div>
+
+                        <div class="category-section">
+                            <div class="category-title">
+                                <i class="fas fa-user"></i> Partes del Cuerpo
+                            </div>
+                            <div class="vocabulary-grid">
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Aka</div>
+                                    <div class="vocab-translation">Cabeza</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Atii</div>
+                                    <div class="vocab-translation">Hombro</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Tava</div>
+                                    <div class="vocab-translation">Rodilla</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Pi</div>
+                                    <div class="vocab-translation">Pie</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Tesa</div>
+                                    <div class="vocab-translation">Ojo</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Nambi</div>
+                                    <div class="vocab-translation">Oreja</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Yuru</div>
+                                    <div class="vocab-translation">Boca</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Ti</div>
+                                    <div class="vocab-translation">Nariz</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Chorokoko</div>
+                                    <div class="vocab-translation">Corazón</div>
+                                </div>
+                                <div class="vocab-card">
+                                    <div class="vocab-word">Ayu</div>
+                                    <div class="vocab-translation">Cuello</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Juego 2: Antónimos -->
+                    <div class="game-section">
+                        <div class="game-header">
+                            <div class="game-header-inner">
+                                <div class="game-number">2</div>
+                                <h3 class="game-title">Palabras Antónimas (Nee jai oyovaicho)</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="vocabulary-grid">
+                            <div class="vocab-card">
+                                <div class="vocab-word">Tuicha ↔️ Michi</div>
+                                <div class="vocab-translation">Grande ↔️ Chico/Pequeño</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Puka ↔️ Yaeo</div>
+                                <div class="vocab-translation">Risa ↔️ Llanto</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">K+ra ↔️ Piru</div>
+                                <div class="vocab-translation">Gordo ↔️ Flaco</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Pochi+ ↔️ Pöra</div>
+                                <div class="vocab-translation">Feo/Horrible ↔️ Bonito/Hermoso</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Mati ↔️ Koiño</div>
+                                <div class="vocab-translation">Lejos ↔️ Cerca</div>
+                            </div>
+                            <div class="vocab-card">
+                                <div class="vocab-word">Po+ ↔️ Jemboch+</div>
+                                <div class="vocab-translation">Pesado ↔️ Salado</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2025 Aprende Guaraní. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        function toggleLevel(levelId) {
+            const container = document.getElementById(levelId);
+            container.classList.toggle('expanded');
+        }
+
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Cerrar menú móvil al hacer clic en un enlace
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

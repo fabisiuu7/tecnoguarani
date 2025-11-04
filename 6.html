@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Adivina la Palabra - Guaraní</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        /* Efecto de partículas de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-logo-left img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        .wrapper {
+            position: relative;
+            width: 90%;
+            max-width: 50em;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 3em 2em;
+            margin: 2em auto;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.6s ease-out;
+            z-index: 1;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .game-title {
+            color: #293250;
+            font-size: 2.5em;
+            margin-bottom: 0.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hint-ref {
+            background: linear-gradient(135deg, #6DD47E, #4CAF50);
+            color: white;
+            padding: 1.5em;
+            border-radius: 15px;
+            margin-bottom: 2em;
+            box-shadow: 0 5px 20px rgba(109, 212, 126, 0.3);
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        #wordHint {
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        #wordHint span {
+            display: block;
+            font-size: 0.9em;
+            margin-bottom: 0.3em;
+            opacity: 0.9;
+        }
+
+        #chanceCount {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #293250;
+            background: rgba(109, 212, 126, 0.2);
+            padding: 0.8em 1.5em;
+            border-radius: 15px;
+            margin: 1.5em 0;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        #user-input-section {
+            margin: 2em 0;
+            font-size: 2em;
+            letter-spacing: 0.5em;
+            font-weight: 600;
+            color: #293250;
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .inputSpace {
+            display: inline-block;
+            margin: 0 0.2em;
+            font-size: 1.5em;
+            color: #667eea;
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        #letter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8em;
+            justify-content: center;
+            margin-top: 2em;
+        }
+
+        #letter-container button {
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            border: 3px solid #667eea;
+            color: #667eea;
+            outline: none;
+            border-radius: 12px;
+            cursor: pointer;
+            height: 3.5em;
+            width: 3.5em;
+            font-size: 1.2em;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        #letter-container button:hover:not(:disabled) {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        #letter-container .correct {
+            background: linear-gradient(135deg, #6DD47E, #4CAF50);
+            color: #ffffff;
+            border: 3px solid #6DD47E;
+            animation: correctBtn 0.6s ease;
+        }
+
+        @keyframes correctBtn {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.2) rotate(5deg);
+            }
+            75% {
+                transform: scale(1.2) rotate(-5deg);
+            }
+        }
+
+        #letter-container .incorrect {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: #ffffff;
+            border: 3px solid #ff6b6b;
+            animation: incorrectBtn 0.5s ease;
+        }
+
+        @keyframes incorrectBtn {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-10px);
+            }
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        #message {
+            margin: 1.5em 0;
+            font-size: 1.3em;
+            font-weight: 600;
+            min-height: 30px;
+            animation: messageSlide 0.4s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .controls-container {
+            background: rgba(41, 50, 80, 0.98);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            gap: 2em;
+        }
+
+        #result {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 0.5em;
+            text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #word {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 1em;
+        }
+
+        #word span {
+            color: #6DD47E;
+            font-size: 1.2em;
+        }
+
+        #start {
+            font-size: 1.5em;
+            padding: 1em 3em;
+            background: linear-gradient(135deg, #6DD47E, #4CAF50);
+            border: none;
+            outline: none;
+            border-radius: 50px;
+            cursor: pointer;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(109, 212, 126, 0.4);
+            transition: all 0.3s ease;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        #start:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(109, 212, 126, 0.6);
+        }
+
+        #start:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        /* Confetti effect */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .hint-icon {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            margin-bottom: 1em;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                right: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-menu li a {
+                justify-content: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .game-title {
+                font-size: 1.8em;
+            }
+
+            #letter-container button {
+                height: 3em;
+                width: 3em;
+                font-size: 1em;
+            }
+
+            #user-input-section {
+                font-size: 1.5em;
+                letter-spacing: 0.3em;
+            }
+
+            #start {
+                font-size: 1.2em;
+                padding: 0.8em 2em;
+            }
+        }
+
+        @media (max-width: 460px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .nav-logo-left img {
+                height: 45px;
+            }
+
+            .wrapper {
+                padding: 2em 1em;
+            }
+
+            .game-title {
+                font-size: 1.5em;
+            }
+
+            #letter-container button {
+                height: 2.5em;
+                width: 2.5em;
+                font-size: 0.9em;
+            }
+
+            #chanceCount {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="../img/tecnoguarani.jpg" alt="Logo Tecnoguaraní" onerror="this.style.display='none'">
+                <img src="../img/soria.jpg" alt="Logo Colegio" onerror="this.style.display='none'">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="../../juegos.html"><i class="fas fa-gamepad"></i> Juegos</a></li>
+                <li><a href="../../bienvenida.html"><i class="fas fa-star"></i> Página Principal</a></li>
+                <li><a href="../../area_per.html"><i class="fas fa-user"></i> Área personal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="wrapper">
+        <h1 class="game-title">🎯 Adivina la Palabra</h1>
+        <div class="hint-ref"></div>
+        <div id="chanceCount"></div>
+        <div id="user-input-section"></div>
+        <div id="message"></div>
+        <div id="letter-container"></div>
+    </div>
+
+    <div class="controls-container">
+        <div id="result"></div>
+        <div id="word"></div>
+        <button id="start"><i class="fas fa-play"></i> Comenzar</button>
+    </div>
+
+    <script>
+        const options = {
+            Tuicha: "Grande",
+            Michi: "Pequeño",
+            Puka: "Risa",
+            Kira: "Gordo",
+            Pochii: "Feo/Horrible",
+            Mati: "Lejos",
+            Koiño: "Cerca"
+        };
+
+        const message = document.getElementById("message");
+        const hintRef = document.querySelector(".hint-ref");
+        const controls = document.querySelector(".controls-container");
+        const startBtn = document.getElementById("start");
+        const letterContainer = document.getElementById("letter-container");
+        const userInpSection = document.getElementById("user-input-section");
+        const resultText = document.getElementById("result");
+        const word = document.getElementById("word");
+        const words = Object.keys(options);
+        let randomWord = "",
+            randomHint = "";
+        let winCount = 0,
+            lossCount = 0;
+
+        const generateRandomValue = (array) => Math.floor(Math.random() * array.length);
+
+        const blocker = () => {
+            let lettersButtons = document.querySelectorAll(".letters");
+            lettersButtons.forEach(btn => btn.disabled = true);
+            stopGame();
+        };
+
+        startBtn.addEventListener("click", () => {
+            controls.classList.add("hide");
+            init();
+        });
+
+        const stopGame = () => {
+            controls.classList.remove("hide");
+        };
+
+        const generateWord = () => {
+            letterContainer.classList.remove("hide");
+            userInpSection.innerText = "";
+            randomWord = words[generateRandomValue(words)];
+            randomHint = options[randomWord];
+            
+            hintRef.innerHTML = `
+                <div class="hint-icon"><i class="fas fa-lightbulb"></i></div>
+                <div id="wordHint">
+                    <span>💡 Pista - Palabra Antónima:</span>
+                    ${randomHint}
+                </div>`;
+            
+            let displayItem = "";
+            randomWord.split("").forEach((value) => {
+                displayItem += '<span class="inputSpace">_ </span>';
+            });
+
+            userInpSection.innerHTML = displayItem;
+            document.getElementById('chanceCount').innerHTML = `🎮 Intentos Restantes: ${lossCount}`;
+        };
+
+        const init = () => {
+            winCount = 0;
+            lossCount = 7;
+            randomWord = "";
+            word.innerText = "";
+            randomHint = "";
+            message.innerText = "";
+            userInpSection.innerHTML = "";
+            letterContainer.classList.add("hide");
+            letterContainer.innerHTML = "";
+            
+            const chanceDiv = document.createElement('div');
+            chanceDiv.id = 'chanceCount';
+            document.querySelector('.wrapper').insertBefore(chanceDiv, userInpSection);
+            
+            generateWord();
+
+            for (let i = 65; i < 91; i++) {
+                let button = document.createElement("button");
+                button.classList.add("letters");
+                button.innerText = String.fromCharCode(i);
+
+                button.addEventListener("click", () => {
+                    let charArray = randomWord.toUpperCase().split("");
+                    let inputSpace = document.getElementsByClassName("inputSpace");
+
+                    if (charArray.includes(button.innerText)) {
+                        message.innerText = `✅ ¡Letra Correcta!`;
+                        message.style.color = "#4CAF50";
+                        charArray.forEach((char, index) => {
+                            if (char === button.innerText) {
+                                button.classList.add("correct");
+                                inputSpace[index].innerText = char;
+                                winCount += 1;
+                                if (winCount == charArray.length) {
+                                    resultText.innerHTML = "🏆 ¡Ganaste!";
+                                    startBtn.innerHTML = '<i class="fas fa-redo"></i> Jugar de Nuevo';
+                                    createConfetti();
+                                    blocker();
+                                }
+                            }
+                        });
+                    } else {
+                        button.classList.add("incorrect");
+                        lossCount -= 1;
+                        document.getElementById("chanceCount").innerHTML = `🎮 Intentos Restantes: ${lossCount}`;
+                        message.innerText = `❌ Letra Incorrecta`;
+                        message.style.color = "#ff6b6b";
+                        if (lossCount == 0) {
+                            word.innerHTML = `La palabra era: <span>${randomWord}</span>`;
+                            resultText.innerHTML = "😢 Perdiste";
+                            startBtn.innerHTML = '<i class="fas fa-redo"></i> Intentar de Nuevo';
+                            blocker();
+                        }
+                    }
+                    button.disabled = true;
+                });
+
+                letterContainer.appendChild(button);
+            }
+        };
+
+        function createConfetti() {
+            const colors = ['#6DD47E', '#667eea', '#764ba2', '#ffd700', '#ff6b6b'];
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animation = `confetti-fall ${2 + Math.random() * 2}s linear`;
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000);
+                }, i * 20);
+            }
+        }
+
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        window.onload = () => {
+            controls.classList.remove("hide");
+        };
+    </script>
+</body>
+</html>

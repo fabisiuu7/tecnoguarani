@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de Juegos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animaciones */
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .nav-logo-left img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li {
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .nav-menu li:nth-child(1) { animation-delay: 0.3s; }
+        .nav-menu li:nth-child(2) { animation-delay: 0.4s; }
+        .nav-menu li:nth-child(3) { animation-delay: 0.5s; }
+        .nav-menu li:nth-child(4) { animation-delay: 0.6s; }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: block;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            margin-top: 85px;
+            padding: 60px 20px 40px;
+            text-align: center;
+            color: white;
+            animation: fadeInUp 0.8s ease-out 0.7s both;
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #fff, #6DD47E);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-section p {
+            font-size: 20px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* Container Principal */
+        .main-container {
+            padding: 40px 20px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Nivel Section */
+        .nivel {
+            margin-bottom: 80px;
+            animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .nivel-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .nivel-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 32px;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(109, 212, 126, 0.4);
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+
+        .nivel-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        /* Grid de Juegos */
+        .juegos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            padding: 0 20px;
+        }
+
+        /* Card de Juego */
+        .juego-card {
+            background: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            animation: fadeInUp 0.6s ease-out both;
+        }
+
+        .juego-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(109, 212, 126, 0.4);
+        }
+
+        .juego-image-container {
+            position: relative;
+            overflow: hidden;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .juego-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.6s ease;
+        }
+
+        .juego-card:hover img {
+            transform: scale(1.15) rotate(2deg);
+        }
+
+        .juego-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(109, 212, 126, 0.8), rgba(102, 126, 234, 0.8));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .juego-card:hover .juego-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            color: #667eea;
+            transform: scale(0);
+            transition: all 0.4s ease;
+        }
+
+        .juego-card:hover .play-icon {
+            transform: scale(1);
+            animation: pulse 1.5s infinite;
+        }
+
+        .juego-content {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .juego-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #293250;
+            margin-bottom: 15px;
+        }
+
+        .juego-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .juego-btn {
+            display: inline-block;
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #6DD47E 0%, #4CAF50 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 20px rgba(109, 212, 126, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .juego-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .juego-btn:hover::before {
+            left: 100%;
+        }
+
+        .juego-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(109, 212, 126, 0.5);
+        }
+
+        /* Difficulty Badge */
+        .difficulty-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+
+        .difficulty-facil { color: #4CAF50; border: 2px solid #4CAF50; }
+        .difficulty-medio { color: #FF9800; border: 2px solid #FF9800; }
+        .difficulty-dificil { color: #F44336; border: 2px solid #F44336; }
+
+        /* Footer */
+        footer {
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            text-align: center;
+            color: #6DD47E;
+            font-size: 16px;
+            box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        footer p {
+            margin: 0;
+            font-weight: 300;
+        }
+
+        /* Floating Elements */
+        .floating-shape {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape1 {
+            width: 300px;
+            height: 300px;
+            background: #6DD47E;
+            top: 10%;
+            left: -100px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape2 {
+            width: 200px;
+            height: 200px;
+            background: #667eea;
+            bottom: 10%;
+            right: -50px;
+            animation: float 8s ease-in-out infinite reverse;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+                flex-wrap: wrap;
+            }
+
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+                margin-top: 15px;
+            }
+
+            .hero-section h1 {
+                font-size: 32px;
+            }
+
+            .hero-section p {
+                font-size: 16px;
+            }
+
+            .juegos-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .nivel-badge {
+                font-size: 24px;
+                padding: 12px 30px;
+            }
+        }
+    </style>
+
+    <!-- Floating Shapes -->
+    <div class="floating-shape shape1"></div>
+    <div class="floating-shape shape2"></div>
+
+    <!-- Barra de Navegación -->
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="codigo/img/tecnoguarani.jpg" alt="Logo Tecnoguaraní">
+                <img src="codigo/img/soria.jpg" alt="Logo Colegio">
+            </div>
+
+            <ul class="nav-menu">
+                <li><a href="codigo/inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="bienvenida.html"><i class="fas fa-star"></i> Principal</a></li>
+                <li><a href="juegos.html"><i class="fas fa-gamepad"></i> Juegos</a></li>
+                <li><a href="area_per.html"><i class="fas fa-user"></i> Área Personal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1>🎮 Aprende Guaraní Jugando</h1>
+        <p>Descubre el idioma guaraní a través de divertidos juegos interactivos</p>
+    </section>
+
+    <!-- Container Principal -->
+    <div class="main-container">
+        <!-- Nivel 1 -->
+        <section id="nivel1" class="nivel">
+            <div class="nivel-header">
+                <div class="nivel-badge">⭐ Nivel 1 - Principiante</div>
+            </div>
+            <div class="juegos-grid">
+                <div class="juego-card">
+                    <div class="difficulty-badge difficulty-facil">FÁCIL</div>
+                    <div class="juego-image-container">
+                        <img src="feria/img/1.png" alt="Juego 1">
+                        <div class="juego-overlay">
+                            <div class="play-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="juego-content">
+                        <h3 class="juego-title">Juego 1: Vocabulario Básico</h3>
+                        <p class="juego-description">Aprende las palabras más comunes del guaraní de forma divertida</p>
+                        <a href="codigo/juegos/1.html" class="juego-btn">
+                            <i class="fas fa-play"></i> Jugar Ahora
+                        </a>
+                    </div>
+                </div>
+
+                <div class="juego-card">
+                    <div class="difficulty-badge difficulty-facil">FÁCIL</div>
+                    <div class="juego-image-container">
+                        <img src="feria/img/2.png" alt="Juego 2">
+                        <div class="juego-overlay">
+                            <div class="play-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="juego-content">
+                        <h3 class="juego-title">Juego 2: Saludos y Expresiones</h3>
+                        <p class="juego-description">Practica los saludos básicos y expresiones cotidianas</p>
+                        <a href="codigo/juegos/2.html" class="juego-btn">
+                            <i class="fas fa-play"></i> Jugar Ahora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nivel 2 -->
+        <section id="nivel2" class="nivel">
+            <div class="nivel-header">
+                <div class="nivel-badge">🌟 Nivel 2 - Intermedio</div>
+            </div>
+            <div class="juegos-grid">
+                <div class="juego-card">
+                    <div class="difficulty-badge difficulty-medio">MEDIO</div>
+                    <div class="juego-image-container">
+                        <img src="feria/img/3.png" alt="Juego 3">
+                        <div class="juego-overlay">
+                            <div class="play-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="juego-content">
+                        <h3 class="juego-title">Juego 3: Construcción de Frases</h3>
+                        <p class="juego-description">Forma oraciones simples y mejora tu comprensión</p>
+                        <a href="codigo/juegos/3.html" class="juego-btn">
+                            <i class="fas fa-play"></i> Jugar Ahora
+                        </a>
+                    </div>
+                </div>
+
+                <div class="juego-card">
+                    <div class="difficulty-badge difficulty-medio">MEDIO</div>
+                    <div class="juego-image-container">
+                        <img src="feria/img/4.png" alt="Juego 4">
+                        <div class="juego-overlay">
+                            <div class="play-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="juego-content">
+                        <h3 class="juego-title">Juego 4: Conversaciones</h3>
+                        <p class="juego-description">Practica diálogos reales en situaciones cotidianas</p>
+                        <a href="codigo/juegos/4.html" class="juego-btn">
+                            <i class="fas fa-play"></i> Jugar Ahora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nivel 3 -->
+        <section id="nivel3" class="nivel">
+            <div class="nivel-header">
+                <div class="nivel-badge">🔥 Nivel 3 - Avanzado</div>
+            </div>
+            <div class="juegos-grid">
+                <div class="juego-card">
+                    <div class="difficulty-badge difficulty-dificil">DIFÍCIL</div>
+                    <div class="juego-image-container">
+                        <img src="feria/img/5.png" alt="Juego 5">
+                        <div class="juego-overlay">
+                            <div class="play-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="juego-content">
+                        <h3 class="juego-title">Juego 5: Desafío Cultural</h3>
+                        <p class="juego-description">Explora la cultura guaraní y su idioma profundo</p>
+                        <a href="codigo/juegos/5.html" class="juego-btn">
+                            <i class="fas fa-play"></i> Jugar Ahora
+                        </a>
+                    </div>
+                </div>
+
+                <div class="juego-card">
+                    <div class="difficulty-badge difficulty-dificil">DIFÍCIL</div>
+                    <div class="juego-image-container">
+                        <img src="feria/img/6.png" alt="Juego 6">
+                        <div class="juego-overlay">
+                            <div class="play-icon">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="juego-content">
+                        <h3 class="juego-title">Juego 6: Maestro del Guaraní</h3>
+                        <p class="juego-description">Demuestra tu dominio total del idioma guaraní</p>
+                        <a href="codigo/juegos/6.html" class="juego-btn">
+                            <i class="fas fa-play"></i> Jugar Ahora
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2025 Aprende Guaraní. Todos los derechos reservados.</p>
+    </footer>
+</body>
+
+</html>

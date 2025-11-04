@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Juego de Preguntas - Guaraní</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        /* Efecto de partículas de fondo */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            animation: float 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(41, 50, 80, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 40px;
+            z-index: 1000;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .nav-logo-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-logo-left img {
+            height: 55px;
+            border-radius: 50%;
+            border: 3px solid #6DD47E;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(109, 212, 126, 0.3);
+        }
+
+        .nav-logo-left img:hover {
+            transform: rotate(360deg) scale(1.1);
+            box-shadow: 0 0 30px rgba(109, 212, 126, 0.6);
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu li a {
+            position: relative;
+            font-size: 18px;
+            color: #6DD47E;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu li a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6DD47E, #4CAF50);
+            transform: translateX(-50%);
+            transition: width 0.4s ease;
+        }
+
+        .nav-menu li a:hover {
+            background: rgba(109, 212, 126, 0.1);
+            transform: translateY(-3px);
+            color: #fff;
+        }
+
+        .nav-menu li a:hover::before {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #6DD47E;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 80px);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 42px;
+            text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .puntaje {
+            font-size: 24px;
+            margin-bottom: 20px;
+            padding: 15px 30px;
+            background: rgba(109, 212, 126, 0.2);
+            border-radius: 15px;
+            border: 2px solid #6DD47E;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .encabezado {
+            background: rgba(255, 255, 255, 0.95);
+            min-width: 300px;
+            width: 80%;
+            max-width: 700px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .pregunta {
+            color: #293250;
+            font-size: 26px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 240, 240, 0.95));
+            width: 80%;
+            max-width: 650px;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            color: #293250;
+            font-size: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            animation: slideInBtn 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .btn:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .btn:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .btn:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes slideInBtn {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 30px rgba(109, 212, 126, 0.4);
+            border-color: #6DD47E;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn.correct {
+            animation: correctBtn 0.6s ease;
+            background: linear-gradient(135deg, #6DD47E, #4CAF50);
+            color: white;
+            border-color: #6DD47E;
+        }
+
+        @keyframes correctBtn {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1) rotate(2deg);
+            }
+            75% {
+                transform: scale(1.1) rotate(-2deg);
+            }
+        }
+
+        .btn.incorrect {
+            animation: incorrectBtn 0.5s ease;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        @keyframes incorrectBtn {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-15px);
+            }
+            50% {
+                transform: translateX(15px);
+            }
+            75% {
+                transform: translateX(-10px);
+            }
+        }
+
+        #mensaje {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(41, 50, 80, 0.98), rgba(60, 76, 128, 0.98));
+            color: white;
+            padding: 40px 60px;
+            border-radius: 25px;
+            z-index: 2000;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.6);
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 3px solid #6DD47E;
+            text-align: center;
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        #mensaje.success {
+            background: linear-gradient(135deg, rgba(109, 212, 126, 0.98), rgba(76, 175, 80, 0.98));
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), celebrate 1s ease 0.5s;
+        }
+
+        @keyframes celebrate {
+            0%, 100% {
+                transform: translate(-50%, -50%) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(-50%, -50%) rotate(-5deg) scale(1.05);
+            }
+            75% {
+                transform: translate(-50%, -50%) rotate(5deg) scale(1.05);
+            }
+        }
+
+        #mensaje.error {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.98), rgba(239, 83, 80, 0.98));
+        }
+
+        /* Confetti effect */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #6DD47E;
+            z-index: 1999;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(41, 50, 80, 0.98);
+                position: absolute;
+                top: 70px;
+                right: 0;
+                left: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease-out;
+            }
+
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-menu li a {
+                justify-content: center;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            .pregunta {
+                font-size: 22px;
+            }
+
+            .btn {
+                font-size: 18px;
+                padding: 15px;
+            }
+
+            #mensaje {
+                font-size: 26px;
+                padding: 30px 40px;
+            }
+        }
+
+        @media (max-width: 460px) {
+            body {
+                padding-top: 70px;
+            }
+
+            .nav-logo-left img {
+                height: 45px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .puntaje {
+                font-size: 18px;
+                padding: 10px 20px;
+            }
+
+            .pregunta {
+                font-size: 18px;
+            }
+
+            .btn {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            #mensaje {
+                font-size: 22px;
+                padding: 25px 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo-left">
+                <img src="../img/tecnoguarani.jpg" alt="Logo Tecnoguaraní" onerror="this.style.display='none'">
+                <img src="../img/soria.jpg" alt="Logo Colegio" onerror="this.style.display='none'">
+            </div>
+
+            <div class="hamburger" onclick="toggleMenu()">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="../inicio.html"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="../../juegos.html"><i class="fas fa-gamepad"></i> Juegos</a></li>
+                <li><a href="../../bienvenida.html"><i class="fas fa-star"></i> Página Principal</a></li>
+                <li><a href="../../area_per.html"><i class="fas fa-user"></i> Área personal</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>🎮 Juego de Preguntas - Guaraní</h1>
+        
+        <div class="puntaje" id="puntaje"></div>
+        
+        <div class="encabezado">
+            <div class="pregunta" id="pregunta"></div>
+        </div>
+        
+        <div class="btn" id="btn1" onclick="oprimir_btn(0)"></div>
+        <div class="btn" id="btn2" onclick="oprimir_btn(1)"></div>
+        <div class="btn" id="btn3" onclick="oprimir_btn(2)"></div>
+    </main>
+
+    <div id="mensaje"></div>
+
+    <script>
+        const preguntasOriginales = [
+            {
+                pregunta: "¿Cuál es la traducción de Mano a Guaraní?",
+                respuesta: "Po",
+                incorrectas: ["Kupe", "Tembe"]
+            },
+            {
+                pregunta: "¿Cuál es la traducción de Nariz a Guaraní?",
+                respuesta: "Ti",
+                incorrectas: ["Ayu", "Aka"]
+            },
+            {
+                pregunta: "¿Cuál es la traducción de Brazo a Guaraní?",
+                respuesta: "Y+va",
+                incorrectas: ["Ayu", "Kupe"]
+            },
+            {
+                pregunta: "¿Cuál es la traducción de Ojo a Guaraní?",
+                respuesta: "Tesa",
+                incorrectas: ["Apy", "Tembe"]
+            },
+            {
+                pregunta: "¿Cuál es la traducción de Hombros a Guaraní?",
+                respuesta: "At++",
+                incorrectas: ["Apy", "Py"]
+            },
+            {
+                pregunta: "¿Cuál es la traducción de Boca a Guaraní?",
+                respuesta: "Yuru",
+                incorrectas: ["Tesa", "Py"]
+            },
+            {
+                pregunta: "¿Cuál es la traducción de Rodilla a Guaraní?",
+                respuesta: "Tava",
+                incorrectas: ["Kupe", "Py"]
+            }
+        ];
+
+        let preguntas = [];
+        let preguntas_hechas = 0;
+        let preguntas_correctas = 0;
+        let errores = 0;
+        let esperandoRespuesta = false;
+        const maxErrores = 4;
+
+        function mostrarPregunta(n) {
+            if (n >= preguntas.length) {
+                finalizarJuego(true);
+                return;
+            }
+
+            const pregunta = preguntas[n];
+            document.getElementById("pregunta").innerHTML = pregunta.pregunta;
+
+            const respuestas = [pregunta.respuesta, ...pregunta.incorrectas];
+            mezclar(respuestas);
+
+            for (let i = 0; i < 3; i++) {
+                const btn = document.getElementById(`btn${i + 1}`);
+                btn.innerHTML = respuestas[i];
+                btn.classList.remove('correct', 'incorrect');
+            }
+
+            document.getElementById("puntaje").innerHTML = `✅ Correctas: ${preguntas_correctas} | ❌ Errores: ${errores} / 📝 Preguntas: ${preguntas_hechas}/${preguntas.length}`;
+            esperandoRespuesta = false;
+        }
+
+        function mezclar(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function mezclarPreguntas() {
+            preguntas = [...preguntasOriginales];
+            mezclar(preguntas);
+        }
+
+        function oprimir_btn(i) {
+            if (esperandoRespuesta) return;
+            esperandoRespuesta = true;
+
+            const pregunta = preguntas[preguntas_hechas];
+            const btnSeleccionado = document.getElementById(`btn${i + 1}`);
+            const respuestaSeleccionada = btnSeleccionado.innerHTML;
+
+            if (respuestaSeleccionada === pregunta.respuesta) {
+                btnSeleccionado.classList.add('correct');
+                preguntas_correctas++;
+                mostrarMensaje("🎉 ¡Correcto! ¡Excelente trabajo!", 'success');
+                
+                setTimeout(() => {
+                    preguntas_hechas++;
+                    
+                    // Verificar si completó todas las preguntas
+                    if (preguntas_hechas >= preguntas.length) {
+                        // Si no tiene errores, GANÓ
+                        if (errores === 0) {
+                            finalizarJuego('perfecto');
+                        } else {
+                            // Si tiene al menos un error, terminó pero no ganó
+                            finalizarJuego('completo');
+                        }
+                    } else {
+                        mostrarPregunta(preguntas_hechas);
+                    }
+                }, 1500);
+            } else {
+                btnSeleccionado.classList.add('incorrect');
+                errores++;
+                
+                mostrarMensaje(`❌ ¡Incorrecto! La respuesta era: ${pregunta.respuesta}`, 'error');
+                
+                setTimeout(() => {
+                    preguntas_hechas++;
+                    
+                    // Si tiene 4 errores o más, reinicia automáticamente
+                    if (errores >= maxErrores) {
+                        finalizarJuego('perdio');
+                    } else if (preguntas_hechas >= preguntas.length) {
+                        // Si completó todas las preguntas pero con errores
+                        finalizarJuego('completo');
+                    } else {
+                        mostrarPregunta(preguntas_hechas);
+                    }
+                }, 2000);
+            }
+        }
+
+        function finalizarJuego(tipo) {
+            if (tipo === 'perfecto') {
+                // GANÓ - Completó todo sin errores
+                createConfetti();
+                mostrarMensaje(`🏆 ¡FELICIDADES, GANASTE!<br>🎯 Has completado el juego PERFECTO<br>✅ ${preguntas_correctas}/${preguntas.length} respuestas correctas<br>❌ 0 errores`, 'success', true);
+            } else if (tipo === 'completo') {
+                // Completó el juego pero con errores
+                mostrarMensaje(`📝 ¡Juego Terminado!<br>⚠️ Intenta de nuevo para ganar sin errores<br>✅ Respuestas correctas: ${preguntas_correctas}/${preguntas.length}<br>❌ Errores: ${errores}`, 'error', true);
+            } else if (tipo === 'perdio') {
+                // Perdió por tener 4 errores
+                mostrarMensaje(`😢 ¡Has perdido!<br>❌ Cometiste ${errores} errores<br>✅ Respuestas correctas: ${preguntas_correctas}/${preguntas_hechas}<br>🔄 Reiniciando el juego...`, 'error', true);
+            }
+        }
+
+        function mostrarMensaje(texto, tipo = '', reiniciar = false) {
+            const mensaje = document.getElementById("mensaje");
+            mensaje.innerHTML = texto;
+            mensaje.className = tipo;
+            mensaje.style.display = "block";
+
+            setTimeout(() => {
+                mensaje.style.display = "none";
+                if (reiniciar) {
+                    setTimeout(() => {
+                        resetearJuego();
+                    }, 500);
+                }
+            }, reiniciar ? 4000 : 1500);
+        }
+
+        function resetearJuego() {
+            preguntas_hechas = 0;
+            preguntas_correctas = 0;
+            errores = 0;
+            esperandoRespuesta = false;
+            mezclarPreguntas(); // Mezcla el orden de las preguntas
+            mostrarPregunta(preguntas_hechas);
+        }
+
+        function createConfetti() {
+            const colors = ['#6DD47E', '#667eea', '#764ba2', '#ffd700', '#ff6b6b'];
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animation = `confetti-fall ${2 + Math.random() * 2}s linear`;
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 4000);
+                }, i * 20);
+            }
+        }
+
+        function toggleMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        }
+
+        // Cerrar menú móvil al hacer clic en un enlace
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Iniciar el juego
+        window.onload = function () {
+            mezclarPreguntas(); // Mezcla las preguntas al iniciar
+            mostrarPregunta(preguntas_hechas);
+        };
+    </script>
+</body>
+</html>
